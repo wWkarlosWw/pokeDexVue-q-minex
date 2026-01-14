@@ -43,13 +43,23 @@ export function usePokemFetch() {
       image: p.sprites.other["official-artwork"].front_default,
       types: p.types.map((t) => t.type.name),
     }));
-
     return {
       result: pokemons,
       total: listResponse.count,
     };
-    // quitar any
   };
 
-  return { getListPokemon };
+  const updatePokemon = async (id: number, newData: unknown) => {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 2000);
+    });
+    console.group("Simulador de Guardado");
+    console.log(`ID del Pokémon: ${id}`);
+    console.log("Payload enviado:", newData);
+    console.log("Estado de la petición: 200");
+    console.groupEnd();
+    return { success: true };
+  };
+
+  return { getListPokemon, updatePokemon };
 }

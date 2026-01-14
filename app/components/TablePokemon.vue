@@ -13,6 +13,8 @@ const columns: TableColumn<Pokemon>[] = [
   { accessorKey: "types", header: "Tipo" },
   { id: "action", header: "" },
 ];
+
+const emit = defineEmits<{ (e: "edit", id: number): void }>();
 </script>
 
 <template>
@@ -40,18 +42,15 @@ const columns: TableColumn<Pokemon>[] = [
           </div>
         </template>
         <template #action-cell="{ row }">
-          <UModal title="Editar Pokémon">
+          <ClientOnly>
             <UButton
               label="Editar"
               color="neutral"
               variant="subtle"
               icon="i-lucide-edit"
+              @click="emit('edit', row.original.id)"
             />
-
-            <template #body>
-              <EditarPokemons :pokemon="row.original" />
-            </template>
-          </UModal>
+          </ClientOnly>
         </template>
       </UTable>
     </UContainer>
