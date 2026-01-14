@@ -9,6 +9,8 @@ const { isOpen, open, close } = useModalStore();
 
 const toast = useToast();
 
+const isSaving = ref(false);
+
 const { limit, page, offset } = UsePaginLimits();
 
 const { data: pokemons, pending } = await useAsyncData(
@@ -32,6 +34,7 @@ const editPokemon = (id: number) => {
 
 const handleOnSubmit = async (id: number, data: PokemonFormSchema) => {
   try {
+    isSaving.value = true;
     const response = await updatePokemon(id, data);
 
     if (response.success) {
@@ -40,7 +43,8 @@ const handleOnSubmit = async (id: number, data: PokemonFormSchema) => {
         description: `Los cambios para ${data.name} se han guardado con éxito`,
         color: "success",
       });
-      close();
+       
+       close();
     }
   } catch (error) {
     console.error("Error al actualizar el Pokémon:", error);
@@ -49,6 +53,8 @@ const handleOnSubmit = async (id: number, data: PokemonFormSchema) => {
       description: "No se pudieron guardar los cambios. Inténtalo de nuevo.",
       color: "error",
     });
+  }finally{
+    isSaving.value = false;
   }
 };
 </script>
@@ -85,6 +91,7 @@ const handleOnSubmit = async (id: number, data: PokemonFormSchema) => {
         <EditarPokemons
           :initial-values="initialValues!"
           :selected-pokemon="selectedPokemon!"
+          :loading="isSaving"
           @save="handleOnSubmit"
         />
       </template>

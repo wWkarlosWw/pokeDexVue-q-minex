@@ -2,11 +2,12 @@
 import { pokemonFormSchema } from "#shared/schema/pokemon";
 import type { FormSubmitEvent } from "@nuxt/ui";
 
-const isSubmitting = ref(false);
+const form = useTemplateRef("form");
 
 const props = defineProps<{
   initialValues: PokemonFormSchema;
   selectedPokemon: Pokemon;
+  loading: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -32,19 +33,23 @@ const typeOptions = computed(
 </script>
 
 <template>
-  <div class="flex flex-col md:flex-row items-center md:items-start gap-8 p-2">
+  <div
+    class="flex flex-col md:flex-row items-center md:items-start gap-8 p-2 personal"
+  >
     <UForm
+      ref="form"
       :schema="pokemonFormSchema"
       :state="state"
       class="flex-1 space-y-4 w-full"
       @submit="onSubmit"
+      #default="{ loading: loadingForm }"
+      :disabled="loading"
     >
       <UFormField label="Nombre" name="name" class="w-full">
         <UInput
           v-model="state.name"
           placeholder="Nombre del pokemon"
           class="capitalize"
-          :disabled="isSubmitting"
         />
       </UFormField>
 
@@ -56,7 +61,6 @@ const typeOptions = computed(
           placeholder="Selecciona los tipos"
           class="w-full capitalize"
           icon="i-lucide-tags"
-          :disabled="isSubmitting"
         />
       </UFormField>
 
@@ -64,8 +68,8 @@ const typeOptions = computed(
         <UButton
           type="submit"
           color="primary"
-          :disabled="isSubmitting"
-          :loading="isSubmitting"
+          :disabled="loading || !form?.dirty"
+          :loading="loading || loadingForm"
         >
           Guardar
         </UButton>
